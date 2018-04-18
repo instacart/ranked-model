@@ -103,7 +103,11 @@ module RankedModel
       end
 
       def rank_changed?
-        instance.send "#{ranker.column}_changed?"
+        if instance.respond_to?(:will_save_change_to_attribute?)
+          instance.will_save_change_to_attribute?(ranker.column)
+        else
+          instance.send "#{ranker.column}_changed?"
+        end
       end
 
       def new_record?
